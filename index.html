@@ -20,7 +20,7 @@
     form {
       margin-top: 20px;
     }
-    label, input {
+    label, input, select {
       margin-bottom: 10px;
       display: block;
     }
@@ -43,73 +43,85 @@
   <div id="map"></div>
 
   <form id="contractorForm">
-  <label for="name">Name:</label>
-  <input type="text" id="name" required>
+    <label for="name">Name:</label>
+    <input type="text" id="name" required>
 
-  <label for="discipline">Discipline:</label>
-  <select id="discipline" required>
-    <option value="">Select</option>
-    <option value="OT">OT</option>
-    <option value="PT">PT</option>
-    <option value="SLP">SLP</option>
-    <option value="SI">SI</option>
-  </select>
+    <label for="discipline">Discipline:</label>
+    <select id="discipline" required>
+      <option value="">Select</option>
+      <option value="OT">OT</option>
+      <option value="PT">PT</option>
+      <option value="SLP">SLP</option>
+      <option value="SI">SI</option>
+    </select>
 
-  <label for="date">Today's Date:</label>
-  <input type="date" id="date" required>
+    <label for="date">Today's Date:</label>
+    <input type="date" id="date" required>
 
-  <label for="caseCount">How many cases are you looking for?</label>
-  <input type="number" id="caseCount" min="0" required>
+    <label for="caseCount">How many cases are you looking for?</label>
+    <input type="number" id="caseCount" min="0" required>
 
-  <label>Availability:</label>
-  <table id="availabilityGrid" border="1" style="border-collapse: collapse; margin-bottom: 1rem;">
-    <thead>
-      <tr>
-        <th></th>
-        <th>Monday</th>
-        <th>Tuesday</th>
-        <th>Wednesday</th>
-        <th>Thursday</th>
-        <th>Friday</th>
-        <th>Saturday</th>
-        <th>Sunday</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${["all_day", "before_9a", "9a_12p", "12p_3p", "3p_5p", "after_5p"].map(label => `
+    <label>Availability:</label>
+    <table id="availabilityGrid" border="1" style="border-collapse: collapse; margin-bottom: 1rem;">
+      <thead>
         <tr>
-          <td>${label.replace(/_/g, " ").replace("a", "a")}</td>
-          ${["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(day => `
-            <td>
-              <input type="checkbox" name="availability" value="${day.toLowerCase()}_${label}">
-            </td>
-          `).join("")}
+          <th></th>
+          <th>Monday</th>
+          <th>Tuesday</th>
+          <th>Wednesday</th>
+          <th>Thursday</th>
+          <th>Friday</th>
+          <th>Saturday</th>
+          <th>Sunday</th>
         </tr>
-      `).join("")}
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <tr>
+          <td>All Day</td>
+          <td><input type="checkbox" name="availability" value="mon_all_day"></td>
+          <td><input type="checkbox" name="availability" value="tue_all_day"></td>
+          <td><input type="checkbox" name="availability" value="wed_all_day"></td>
+          <td><input type="checkbox" name="availability" value="thu_all_day"></td>
+          <td><input type="checkbox" name="availability" value="fri_all_day"></td>
+          <td><input type="checkbox" name="availability" value="sat_all_day"></td>
+          <td><input type="checkbox" name="availability" value="sun_all_day"></td>
+        </tr>
+        <!-- Add more rows for other time slots (before 9a, 9a-12p, etc.) -->
+        <tr>
+          <td>Before 9a</td>
+          <td><input type="checkbox" name="availability" value="mon_before_9a"></td>
+          <td><input type="checkbox" name="availability" value="tue_before_9a"></td>
+          <td><input type="checkbox" name="availability" value="wed_before_9a"></td>
+          <td><input type="checkbox" name="availability" value="thu_before_9a"></td>
+          <td><input type="checkbox" name="availability" value="fri_before_9a"></td>
+          <td><input type="checkbox" name="availability" value="sat_before_9a"></td>
+          <td><input type="checkbox" name="availability" value="sun_before_9a"></td>
+        </tr>
+        <!-- Repeat for each row as needed (9a-12p, 12p-3p, etc.) -->
+      </tbody>
+    </table>
 
-  <label for="locationPref">Where are you comfortable providing services?</label>
-  <select id="locationPref" required>
-    <option value="">Select</option>
-    <option value="home">Home</option>
-    <option value="daycare">Daycare</option>
-    <option value="both">Both</option>
-  </select>
+    <label for="locationPref">Where are you comfortable providing services?</label>
+    <select id="locationPref" required>
+      <option value="">Select</option>
+      <option value="home">Home</option>
+      <option value="daycare">Daycare</option>
+      <option value="both">Both</option>
+    </select>
 
-  <label for="serviceMode">I am comfortable providing services:</label>
-  <select id="serviceMode" required>
-    <option value="">Select</option>
-    <option value="in_person">In person</option>
-    <option value="virtually">Virtually</option>
-    <option value="both">Both</option>
-  </select>
+    <label for="serviceMode">I am comfortable providing services:</label>
+    <select id="serviceMode" required>
+      <option value="">Select</option>
+      <option value="in_person">In person</option>
+      <option value="virtually">Virtually</option>
+      <option value="both">Both</option>
+    </select>
 
-  <label for="selectedZips">Selected Zip Codes:</label>
-  <textarea id="selectedZips" readonly></textarea>
+    <label for="selectedZips">Selected Zip Codes:</label>
+    <textarea id="selectedZips" readonly></textarea>
 
-  <button type="submit">Submit</button>
-</form>
+    <button type="submit">Submit</button>
+  </form>
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -130,7 +142,7 @@
         selectedZipCodes.add(zip);
         layer.setStyle({ fillColor: "#ffcc00" });
       }
-      document.getElementById('selectedZipCodes').value = Array.from(selectedZipCodes).join(',');
+      document.getElementById('selectedZips').value = Array.from(selectedZipCodes).join(',');
     }
 
     // Load GeoJSON and display ZIP code boundaries
@@ -163,7 +175,7 @@
       e.preventDefault();
       const name = document.getElementById('name').value;
       const discipline = document.getElementById('discipline').value;
-      const availability = document.getElementById('availability').value;
+      const availability = Array.from(document.querySelectorAll('input[name="availability"]:checked')).map(cb => cb.value);
       const zipCodes = Array.from(selectedZipCodes).join(',');
 
       // Example: replace with actual submission logic (e.g., Google Sheets API, webhook)
@@ -173,42 +185,8 @@
       // Optionally clear the form
       this.reset();
       selectedZipCodes.clear();
-      document.getElementById('selectedZipCodes').value = "";
+      document.getElementById('selectedZips').value = "";
     });
   </script>
-<script>
-  function toggleCaseInput(show) {
-    const container = document.getElementById('caseCountContainer');
-    container.style.display = show ? 'block' : 'none';
-    if (!show) document.getElementById('caseCount').value = "";
-  }
-
-  document.getElementById('today').valueAsDate = new Date();
-
-  document.getElementById('contractorForm').addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const formData = {
-      name: document.getElementById('name').value,
-      discipline: document.getElementById('discipline').value,
-      date: document.getElementById('today').value,
-      lookingForMore: document.querySelector('input[name="lookingForMore"]:checked')?.value,
-      caseCount: document.getElementById('caseCount').value || "0",
-      availability: Array.from(document.querySelectorAll('input[name="availability"]:checked')).map(cb => cb.value),
-      locationPref: document.querySelector('input[name="locationPref"]:checked')?.value,
-      serviceMode: document.querySelector('input[name="serviceMode"]:checked')?.value,
-      zipCodes: Array.from(selectedZipCodes).join(',')
-    };
-
-    console.log(formData);
-    alert("Form submitted! Check console for values.");
-    this.reset();
-    selectedZipCodes.clear();
-    document.getElementById('selectedZipCodes').value = "";
-    document.getElementById('zipDisplay').innerText = "";
-    document.getElementById('today').valueAsDate = new Date();
-    toggleCaseInput(false);
-  });
-</script>
 </body>
 </html>
