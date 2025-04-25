@@ -43,7 +43,7 @@
   <div id="map"></div>
 
   <form id="contractorForm">
-  <label for="name">Full Name:</label>
+  <label for="name">Name:</label>
   <input type="text" id="name" required>
 
   <label for="discipline">Discipline:</label>
@@ -55,61 +55,61 @@
     <option value="SI">SI</option>
   </select>
 
+  <label for="date">Today's Date:</label>
+  <input type="date" id="date" required>
+
+  <label for="caseCount">How many cases are you looking for?</label>
+  <input type="number" id="caseCount" min="0" required>
+
   <label>Availability:</label>
-  <table border="1" cellpadding="5">
+  <table id="availabilityGrid" border="1" style="border-collapse: collapse; margin-bottom: 1rem;">
     <thead>
       <tr>
-        <th>Day</th>
-        <th>All Day</th>
-        <th>Before 9a</th>
-        <th>9a–12p</th>
-        <th>12p–3p</th>
-        <th>3p–5p</th>
-        <th>After 5p</th>
+        <th></th>
+        <th>Monday</th>
+        <th>Tuesday</th>
+        <th>Wednesday</th>
+        <th>Thursday</th>
+        <th>Friday</th>
+        <th>Saturday</th>
+        <th>Sunday</th>
       </tr>
     </thead>
     <tbody>
-      <script>
-        const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-        const blocks = ["all_day", "before_9a", "9a_12p", "12p_3p", "3p_5p", "after_5p"];
-        document.write(days.map(day => `
-          <tr>
-            <td>${day}</td>
-            ${blocks.map(block =>
-              `<td><input type="checkbox" name="availability" value="${day}_${block}"></td>`
-            ).join('')}
-          </tr>
-        `).join(''));
-      </script>
+      ${["all_day", "before_9a", "9a_12p", "12p_3p", "3p_5p", "after_5p"].map(label => `
+        <tr>
+          <td>${label.replace(/_/g, " ").replace("a", "a")}</td>
+          ${["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(day => `
+            <td>
+              <input type="checkbox" name="availability" value="${day.toLowerCase()}_${label}">
+            </td>
+          `).join("")}
+        </tr>
+      `).join("")}
     </tbody>
   </table>
 
-  <label>Where are you comfortable providing services?</label>
-  <label><input type="radio" name="locationPref" value="home" required> Home</label>
-  <label><input type="radio" name="locationPref" value="daycare"> Daycare</label>
-  <label><input type="radio" name="locationPref" value="both"> Both</label>
+  <label for="locationPref">Where are you comfortable providing services?</label>
+  <select id="locationPref" required>
+    <option value="">Select</option>
+    <option value="home">Home</option>
+    <option value="daycare">Daycare</option>
+    <option value="both">Both</option>
+  </select>
 
-  <label>I am comfortable providing services:</label>
-  <label><input type="radio" name="serviceMode" value="in_person" required> In person</label>
-  <label><input type="radio" name="serviceMode" value="virtually"> Virtually</label>
-  <label><input type="radio" name="serviceMode" value="both"> Both</label>
+  <label for="serviceMode">I am comfortable providing services:</label>
+  <select id="serviceMode" required>
+    <option value="">Select</option>
+    <option value="in_person">In person</option>
+    <option value="virtually">Virtually</option>
+    <option value="both">Both</option>
+  </select>
 
-  <label for="today">Today's Date:</label>
-  <input type="date" id="today" required>
+  <label for="selectedZips">Selected Zip Codes:</label>
+  <textarea id="selectedZips" readonly></textarea>
 
-  <label>Are you looking for more cases right now?</label>
-  <label><input type="radio" name="lookingForMore" value="yes" required onchange="toggleCaseInput(true)"> Yes</label>
-  <label><input type="radio" name="lookingForMore" value="no" onchange="toggleCaseInput(false)"> No</label>
-
-  <div id="caseCountContainer" style="display:none;">
-    <label for="caseCount">If yes, how many cases are you looking for?</label>
-    <input type="number" id="caseCount" min="1">
-  </div>
-
-  <input type="hidden" id="selectedZipCodes" name="selectedZipCodes">
   <button type="submit">Submit</button>
 </form>
-
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
