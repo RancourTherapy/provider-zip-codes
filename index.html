@@ -176,6 +176,39 @@
       document.getElementById('selectedZipCodes').value = "";
     });
   </script>
+<script>
+  function toggleCaseInput(show) {
+    const container = document.getElementById('caseCountContainer');
+    container.style.display = show ? 'block' : 'none';
+    if (!show) document.getElementById('caseCount').value = "";
+  }
+
+  document.getElementById('today').valueAsDate = new Date();
+
+  document.getElementById('contractorForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const formData = {
+      name: document.getElementById('name').value,
+      discipline: document.getElementById('discipline').value,
+      availability: Array.from(document.querySelectorAll('input[name="availability"]:checked')).map(cb => cb.value),
+      locationPref: document.querySelector('input[name="locationPref"]:checked')?.value,
+      serviceMode: document.querySelector('input[name="serviceMode"]:checked')?.value,
+      date: document.getElementById('today').value,
+      lookingForMore: document.querySelector('input[name="lookingForMore"]:checked')?.value,
+      caseCount: document.getElementById('caseCount').value || "0",
+      zipCodes: Array.from(selectedZipCodes).join(',')
+    };
+
+    console.log(formData);
+    alert("Form submitted! Check console for values.");
+    this.reset();
+    selectedZipCodes.clear();
+    document.getElementById('selectedZipCodes').value = "";
+    document.getElementById('today').valueAsDate = new Date();
+    toggleCaseInput(false);
+  });
+</script>
 
 </body>
 </html>
