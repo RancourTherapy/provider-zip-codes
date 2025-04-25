@@ -86,7 +86,6 @@
           <td><input type="checkbox" name="availability" value="sat_all_day"></td>
           <td><input type="checkbox" name="availability" value="sun_all_day"></td>
         </tr>
-        <!-- Add more rows for other time slots (before 9a, 9a-12p, etc.) -->
         <tr>
           <td>Before 9a</td>
           <td><input type="checkbox" name="availability" value="mon_before_9a"></td>
@@ -97,7 +96,7 @@
           <td><input type="checkbox" name="availability" value="sat_before_9a"></td>
           <td><input type="checkbox" name="availability" value="sun_before_9a"></td>
         </tr>
-        <!-- Repeat for each row as needed (9a-12p, 12p-3p, etc.) -->
+        <!-- Repeat for other time slots as needed -->
       </tbody>
     </table>
 
@@ -117,8 +116,8 @@
       <option value="both">Both</option>
     </select>
 
-    <label for="selectedZips">Selected Zip Codes:</label>
-    <textarea id="selectedZips" readonly></textarea>
+    <label for="selectedZipCodes">Selected Zip Codes:</label>
+    <textarea id="selectedZipCodes" readonly></textarea>
 
     <button type="submit">Submit</button>
   </form>
@@ -134,6 +133,7 @@
       attribution: 'Map data © OpenStreetMap contributors'
     }).addTo(map);
 
+    // Function to toggle the zip code selection on map click
     function toggleZipSelection(zip, layer) {
       if (selectedZipCodes.has(zip)) {
         selectedZipCodes.delete(zip);
@@ -142,51 +142,12 @@
         selectedZipCodes.add(zip);
         layer.setStyle({ fillColor: "#ffcc00" });
       }
-      document.getElementById('selectedZips').value = Array.from(selectedZipCodes).join(',');
+      // Update the textarea with selected zip codes
+      document.getElementById('selectedZipCodes').value = Array.from(selectedZipCodes).join(', ');
     }
 
     // Load GeoJSON and display ZIP code boundaries
     fetch('philadelphia_zipcodes.geojson')
       .then(response => response.json())
       .then(data => {
-        L.geoJSON(data, {
-          style: () => ({
-            color: "#3388ff",
-            weight: 2,
-            fillOpacity: 0.5
-          }),
-          onEachFeature: (feature, layer) => {
-            const zip = feature.properties.CODE;
-            if (!zip) return;
-
-            layer.bindTooltip(zip.toString(), {
-              permanent: true,
-              direction: 'center',
-              className: 'zip-label'
-            });
-
-            layer.on('click', () => toggleZipSelection(zip, layer));
-          }
-        }).addTo(map);
-      });
-
-    // Submit form
-    document.getElementById('contractorForm').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const name = document.getElementById('name').value;
-      const discipline = document.getElementById('discipline').value;
-      const availability = Array.from(document.querySelectorAll('input[name="availability"]:checked')).map(cb => cb.value);
-      const zipCodes = Array.from(selectedZipCodes).join(',');
-
-      // Example: replace with actual submission logic (e.g., Google Sheets API, webhook)
-      console.log({ name, discipline, availability, zipCodes });
-      alert('Form submitted! Check console for values.');
-
-      // Optionally clear the form
-      this.reset();
-      selectedZipCodes.clear();
-      document.getElementById('selectedZips').value = "";
-    });
-  </script>
-</body>
-</html>
+        L.geoJSON(data
