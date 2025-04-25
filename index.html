@@ -150,4 +150,46 @@
     fetch('philadelphia_zipcodes.geojson')
       .then(response => response.json())
       .then(data => {
-        L.geoJSON(data
+        L.geoJSON(data, {
+          style: () => ({
+            color: "#3388ff",
+            weight: 2,
+            fillOpacity: 0.5
+          }),
+          onEachFeature: (feature, layer) => {
+            const zip = feature.properties.CODE;
+            if (!zip) return;
+
+            layer.bindTooltip(zip.toString(), {
+              permanent: true,
+              direction: 'center',
+              className: 'zip-label'
+            });
+
+            layer.on('click', () => toggleZipSelection(zip, layer));
+          }
+        }).addTo(map);
+      });
+
+    // Submit form
+    document.getElementById('contractorForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // Collect form data
+      const name = document.getElementById('name').value;
+      const discipline = document.getElementById('discipline').value;
+      const availability = Array.from(document.querySelectorAll('input[name="availability"]:checked')).map(cb => cb.value);
+      const zipCodes = Array.from(selectedZipCodes).join(', ');
+
+      // Display form data in console for review
+      console.log({ name, discipline, availability, zipCodes });
+      alert('Form submitted! Check console for values.');
+
+      // Optionally clear the form
+      this.reset();
+      selectedZipCodes.clear();
+      document.getElementById('selectedZipCodes').value = "";
+    });
+  </script>
+</body>
+</html>
