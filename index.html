@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Contractor ZIP Code Selector</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    #map {
+      height: 500px;
+      width: 100%;
+    }
+    form {
+      margin-top: 20px;
+    }
+    label, input {
+      margin-bottom: 10px;
+      display: block;
+    }
+    button {
+      padding: 10px 20px;
+    }
+    .zip-label {
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 4px;
+      padding: 2px 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Select Philadelphia ZIP Codes</h1>
+  <div id="map"></div>
+
+  <form id="contractorForm">
+    <label for="name">Full Name:</label>
+    <input type="text" id="name" required>
+
+    <label for="discipline">Discipline (e.g., OT, PT, SLP):</label>
+    <input type="text" id="discipline" required>
+
+    <label for="availability">Availability (e.g., mornings, afternoons):</label>
+    <input type="text" id="availability" required>
+
+    <input type="hidden" id="selectedZipCodes" name="selectedZipCodes">
+    <button type="submit">Submit</button>
+  </form>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([40.01, -75.15], 11);
+    const selectedZipCodes = new Set();
+
+    // Base map layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data © OpenStreetMap contributors'
+    }).addTo(map);
+
+    function toggleZipSelection(zip, layer) {
+      if (selectedZipCodes.has(zip)) {
+        selectedZipCodes.delete(zip);
+        layer.setStyle({ fillColor: "#3388ff" });
+      } else {
+        selectedZipCodes.add(zip);
+        layer.setStyle({ fillColor: "#ffcc00" });
+      }
+      document.getElementById('selectedZipCodes').value = Array.from(selectedZipCodes).join(',');
+    }
+
+    // Load GeoJSON and display ZIP code boundaries
+    fetch('philadelphia_zipcodes.geojson')
+      .then(response => response.json())
+      .then(data => {
+        L.geoJSON(data, {
+          style: () => ({
+            color: "#3388ff",
+            weight: 2,
+            fillOpacity: 0.5
+          }),
+          onEachFeature: (feature, layer) => {
+            const zip = feature.properties.CODE;
+            if (!zip) return;
+
+            layer.bindTooltip(zip.toString(), {
+              permanent: true,
+              direction: 'center',
+              className: 'zip-label'
+            });
+
+            layer.on('click', () => toggleZipSelection(zip, layer));
+          }
+        }).addTo(map);
+      });
+
+    // Submit form
+    document.getElementById('contractorForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const discipline = document.getElementById('discipline').value;
+      const availability = document.getElementById('availability').value;
+      const zipCodes = Array.from(selectedZipCodes).join(',');
+
+      // Example: replace with actual submission logic (e.g., Google Sheets API, webhook)
+      console.log({ name, discipline, availability, zipCodes });
+      alert('Form submitted! Check console for values.');
+
+      // Optionally clear the form
+      this.reset();
+      selectedZipCodes.clear();
+      document.getElementById('selectedZipCodes').value = "";
+    });
+  </script>
+
+</body>
+</html>
