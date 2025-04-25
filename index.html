@@ -191,12 +191,12 @@
     const formData = {
       name: document.getElementById('name').value,
       discipline: document.getElementById('discipline').value,
-      availability: Array.from(document.querySelectorAll('input[name="availability"]:checked')).map(cb => cb.value),
-      locationPref: document.querySelector('input[name="locationPref"]:checked')?.value,
-      serviceMode: document.querySelector('input[name="serviceMode"]:checked')?.value,
       date: document.getElementById('today').value,
       lookingForMore: document.querySelector('input[name="lookingForMore"]:checked')?.value,
       caseCount: document.getElementById('caseCount').value || "0",
+      availability: Array.from(document.querySelectorAll('input[name="availability"]:checked')).map(cb => cb.value),
+      locationPref: document.querySelector('input[name="locationPref"]:checked')?.value,
+      serviceMode: document.querySelector('input[name="serviceMode"]:checked')?.value,
       zipCodes: Array.from(selectedZipCodes).join(',')
     };
 
@@ -205,10 +205,10 @@
     this.reset();
     selectedZipCodes.clear();
     document.getElementById('selectedZipCodes').value = "";
+    document.getElementById('zipDisplay').innerText = "";
     document.getElementById('today').valueAsDate = new Date();
     toggleCaseInput(false);
   });
 </script>
-
 </body>
 </html>
