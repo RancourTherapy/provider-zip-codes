@@ -173,8 +173,23 @@
       const zipCodes = Array.from(selectedZipCodes).join(',');
 
       // Example: replace with actual submission logic (e.g., Google Sheets API, webhook)
-      console.log({ name, discipline, availability, zipCodes });
-      alert('Form submitted! Check console for values.');
+      fetch("https://script.google.com/a/macros/rancourtherapy.com/s/AKfycbz1CRfoNc5M4YXUZEncT0JZwQYayj8iIai6dfpOlaO6aoUkL_rT6DFlyJPAI43E6tM/exec", {
+        method: "POST",
+        body: JSON.stringify({
+          name,
+          discipline,
+          number: document.getElementById("number").value,
+          availability: Array.from(document.querySelectorAll('input[name="availability"]:checked')).map(el => el.value).join(', '),
+          location: document.getElementById("location").value,
+          zipCodes
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }).then(response => {
+        alert('Form submitted successfully!');
+        console.log('Submitted to Google Sheets');
+      });
 
       // Optionally clear the form
       this.reset();
