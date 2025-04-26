@@ -121,7 +121,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     const map = L.map('map').setView([40.01, -75.15], 11);
-    const selectedZipCodes = new Set();
+    const zipcodes = new Set();
 
     // Base map layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -129,14 +129,14 @@
     }).addTo(map);
 
     function toggleZipSelection(zip, layer) {
-      if (selectedZipCodes.has(zip)) {
-        selectedZipCodes.delete(zip);
+      if (zipcodes.has(zip)) {
+        zipcodes.delete(zip);
         layer.setStyle({ fillColor: "#3388ff" });
       } else {
-        selectedZipCodes.add(zip);
+        zipcodes.add(zip);
         layer.setStyle({ fillColor: "#ffcc00" });
       }
-      document.getElementById('selectedZipCodes').value = zipArray.from(selectedZipCodes).join(',');
+      document.getElementById('zipcodes').value = zipArray.from(zipcodes).join(',');
     }
 
     // Load GeoJSON and display ZIP code boundaries
@@ -170,7 +170,7 @@
       const name = document.getElementById('name').value;
       const discipline = document.getElementById('discipline').value;
       const availability = document.getElementById('availability').value;
-      const zipCodes = Array.from(selectedZipCodes).join(',');
+      const zipCodes = Array.from(zipcodes).join(',');
 
       // Example: replace with actual submission logic (e.g., Google Sheets API, webhook)
       fetch("https://script.google.com/a/macros/rancourtherapy.com/s/AKfycbz1CRfoNc5M4YXUZEncT0JZwQYayj8iIai6dfpOlaO6aoUkL_rT6DFlyJPAI43E6tM/exec", {
@@ -193,8 +193,8 @@
 
       // Optionally clear the form
       this.reset();
-      selectedZipCodes.clear();
-      document.getElementById('selectedZipCodes').value = "";
+      zipcodes.clear();
+      document.getElementById('zipcodes').value = "";
     });
   </script>
 
