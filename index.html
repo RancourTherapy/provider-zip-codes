@@ -89,7 +89,7 @@
             fillOpacity: 0.5
           }),
           onEachFeature: (feature, layer) => {
-            const zip = feature.properties.ZIP_RIGHT || feature.properties.ZIPCODE || feature.properties.CODE || feature.properties.ZIP_LEFT;
+            const zip = feature.properties.CODE;
             if (!zip) return;
 
             layer.bindTooltip(zip.toString(), {
