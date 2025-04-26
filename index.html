@@ -136,7 +136,7 @@
         zipcodes.add(zip);
         layer.setStyle({ fillColor: "#ffcc00" });
       }
-      document.getElementById('zipcodes').value = zipArray.from(zipcodes).join(',');
+      document.getElementById('zipcodes').value = Array.from(zipcodes).join(',');
     }
 
     // Load GeoJSON and display ZIP code boundaries
