@@ -174,36 +174,45 @@
       const zipCodes = Array.from(zipcodes).join(',');
 
       // Example: replace with actual submission logic (e.g., Google Sheets API, webhook)
-      fetch("https://script.google.com/macros/s/YOUR_DEPLOYED_URL/exec", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          name,
-          discipline,
-          number: document.getElementById("number").value,
-          availability: Array.from(document.querySelectorAll('input[name="availability"]:checked')).map(el => el.value).join(', '),
-          location: document.getElementById("location").value,
-          type: document.getElementById("type").value,
-          zipCodes
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === "success") {
-          alert('Form submitted successfully!');
-          document.getElementById('contractorForm').reset();
-          zipcodes.clear();
-          document.getElementById('zipcodes').value = "";
-        } else {
-          alert('Form submission failed: ' + data.message);
-        }
-      })
-      .catch(err => {
-        alert('Error submitting form.');
-        console.error(err);
-      });
+fetch("https://script.google.com/macros/s/YOUR_DEPLOYED_URL/exec", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    name,
+    discipline,
+    number: document.getElementById("number").value,
+    availability: Array.from(document.querySelectorAll('input[name="availability"]:checked')).map(el => el.value).join(', '),
+    location: document.getElementById("location").value,
+    type: document.getElementById("type").value,
+    zipCodes
+  })
+})
+.then(response => response.text())  // changed from .json() to .text()
+.then(text => {
+  console.log("Raw response text:", text);
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch (e) {
+    throw new Error("Failed to parse JSON: " + text);
+  }
+
+  if (data.status === "success") {
+    alert('Form submitted successfully!');
+    document.getElementById('contractorForm').reset();
+    zipcodes.clear();
+    document.getElementById('zipcodes').value = "";
+  } else {
+    alert('Form submission failed: ' + data.message);
+  }
+})
+.catch(err => {
+  console.error("Submission error:", err);
+  alert('Error submitting form.');
+});
+
     });
   </script>
 </body>
