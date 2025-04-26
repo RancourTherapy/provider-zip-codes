@@ -174,8 +174,11 @@
       const zipCodes = Array.from(zipcodes).join(',');
 
       // Example: replace with actual submission logic (e.g., Google Sheets API, webhook)
-      fetch("https://script.google.com/macros/s/AKfycbyGa82Tj8zhOu1Dh_P0yefu-SgUy0JS10KZ3AMjuvHKrmV4XHA89bEe-e1JldGmHmU/exec", {
+      fetch("https://script.google.com/macros/s/YOUR_DEPLOYED_URL/exec", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
           name,
           discipline,
@@ -184,24 +187,21 @@
           location: document.getElementById("location").value,
           type: document.getElementById("type").value,
           zipCodes
-        }),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }).then(response => {
-        if (response.ok) {
-          document.getElementById('confirmationMessage').textContent = 'Form submitted successfully!';
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === "success") {
+          alert('Form submitted successfully!');
           document.getElementById('contractorForm').reset();
           zipcodes.clear();
           document.getElementById('zipcodes').value = "";
         } else {
-          document.getElementById('confirmationMessage').textContent = 'Form submission failed.';
-          document.getElementById('confirmationMessage').style.color = 'red';
+          alert('Form submission failed: ' + data.message);
         }
       })
       .catch(err => {
-        document.getElementById('confirmationMessage').textContent = 'Error submitting form.';
-        document.getElementById('confirmationMessage').style.color = 'red';
+        alert('Error submitting form.');
         console.error(err);
       });
     });
