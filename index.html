@@ -169,7 +169,6 @@
       e.preventDefault();
       const name = document.getElementById('name').value;
       const discipline = document.getElementById('discipline').value;
-      const availability = document.getElementById('availability').value;
       const zipCodes = Array.from(zipcodes).join(',');
 
       // Example: replace with actual submission logic (e.g., Google Sheets API, webhook)
@@ -181,21 +180,26 @@
           number: document.getElementById("number").value,
           availability: Array.from(document.querySelectorAll('input[name="availability"]:checked')).map(el => el.value).join(', '),
           location: document.getElementById("location").value,
+          type: document.getElementById("type").value,
           zipCodes
         }),
         headers: {
           "Content-Type": "application/json"
         }
       }).then(response => {
-        alert('Form submitted successfully!');
-        console.log('Submitted to Google Sheets');
+        if (response.ok) {
+          alert('Form submitted successfully!');
+          document.getElementById('contractorForm').reset();
+          zipcodes.clear();
+          document.getElementById('zipcodes').value = "";
+        } else {
+          alert('Form submission failed.');
+        }
+      }).catch(err => {
+        alert('Error submitting form.');
+        console.error(err);
       });
 
-      // Optionally clear the form
-      this.reset();
-      zipcodes.clear();
-      document.getElementById('zipcodes').value = "";
-    });
   </script>
 
 </body>
