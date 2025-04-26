@@ -40,11 +40,11 @@
 <body>
 
   <h1>Select Philadelphia ZIP Codes</h1>
-  <div id="map"></div>  
+  <div id="map"></div>
 
   <form id="contractorForm">
     <label for="name">Name:</label>
-    <input type="text" id="name" required>  
+    <input type="text" id="name" required>
 
     <label for="discipline">Discipline:</label>
     <select id="discipline" required>
@@ -53,10 +53,10 @@
       <option value="PT">PT</option>
       <option value="SLP">SLP</option>
       <option value="SI">SI</option>
-    </select>  
+    </select>
 
     <label for="number">How many cases are you looking for?</label>
-    <input type="text" id="number" required>  
+    <input type="text" id="number" required>
     
     <label>Availability:</label>
       <table border="1" cellpadding="5">
@@ -85,7 +85,7 @@
             `).join(''));
           </script>
         </tbody>
-      </table>  
+      </table>
 
     <label for="location">Where are you comfortable providing services?</label>
       <select id="location" required>
@@ -93,7 +93,7 @@
         <option value="homes">OT</option>
         <option value="daycares">PT</option>
         <option value="both">SLP</option>
-      </select>  
+      </select>
 
     <label for="type">I am comfortable providing services:</label>
       <select id="type" required>
@@ -101,10 +101,10 @@
         <option value="in_person">OT</option>
         <option value="virtually">PT</option>
         <option value="both">SLP</option>
-      </select>  
+      </select>
 
-    <input type="hidden" id="selectedZipCodes" name="selectedZipCodes">  
-   
+    <input type="hidden" id="selectedZipCodes" name="selectedZipCodes">
+    <br></br>
     <button type="submit">Submit</button>
   </form>
 
