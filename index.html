@@ -43,14 +43,65 @@
   <div id="map"></div>
 
   <form id="contractorForm">
-    <label for="name">Full Name:</label>
+    <label for="name">Name:</label>
     <input type="text" id="name" required>
 
-    <label for="discipline">Discipline (e.g., OT, PT, SLP):</label>
-    <input type="text" id="discipline" required>
+    <label for="discipline">Discipline:</label>
+    <select id="discipline" required>
+      <option value="">Select</option>
+      <option value="OT">OT</option>
+      <option value="PT">PT</option>
+      <option value="SLP">SLP</option>
+      <option value="SI">SI</option>
+    </select>
 
-    <label for="availability">Availability (e.g., mornings, afternoons):</label>
-    <input type="text" id="availability" required>
+    <label for="number">How many cases are you looking for?</label>
+    <input type="text" id="number" required>
+    
+    <label>Availability:</label>
+     <table border="1" cellpadding="5">
+      <thead>
+        <tr>
+          <th>Day</th>
+          <th>All Day</th>
+          <th>Before 9a</th>
+          <th>9a–12p</th>
+          <th>12p–3p</th>
+          <th>3p–5p</th>
+          <th>After 5p</th>
+        </tr>
+      </thead>
+      <tbody>
+        <script>
+          const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+          const blocks = ["all_day", "before_9a", "9a_12p", "12p_3p", "3p_5p", "after_5p"];
+          document.write(days.map(day => `
+            <tr>
+              <td>${day}</td>
+              ${blocks.map(block =>
+                `<td><input type="checkbox" name="availability" value="${day}_${block}"></td>`
+              ).join('')}
+            </tr>
+          `).join(''));
+        </script>
+      </tbody>
+    </table>
+
+  <label for="location">Where are you comfortable providing services?</label>
+    <select id="location" required>
+      <option value="">Select</option>
+      <option value="homes">OT</option>
+      <option value="daycares">PT</option>
+      <option value="both">SLP</option>
+    </select>
+
+  <label for="type">I am comfortable providing services:</label>
+    <select id="type" required>
+      <option value="">Select</option>
+      <option value="in_person">OT</option>
+      <option value="virtually">PT</option>
+      <option value="both">SLP</option>
+    </select>
 
     <input type="hidden" id="selectedZipCodes" name="selectedZipCodes">
     <button type="submit">Submit</button>
