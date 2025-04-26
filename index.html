@@ -115,6 +115,7 @@
       <textarea id="zipcodes" name="zipcodes" rows="4" cols="50" readonly></textarea>
     
     <button type="submit">Submit</button>
+    <div id="confirmationMessage" style="margin-top: 20px; font-weight: bold; color: green;"></div>
   </form>
 
   <!-- Leaflet JS -->
@@ -188,15 +189,18 @@
         }
       }).then(response => {
         if (response.ok) {
-          alert('Form submitted successfully!');
+          document.getElementById('confirmationMessage').textContent = 'Form submitted successfully!';
           document.getElementById('contractorForm').reset();
           zipcodes.clear();
           document.getElementById('zipcodes').value = "";
         } else {
-          alert('Form submission failed.');
+          document.getElementById('confirmationMessage').textContent = 'Form submission failed.';
+          document.getElementById('confirmationMessage').style.color = 'red';
         }
-      }).catch(err => {
-        alert('Error submitting form.');
+      })
+      .catch(err => {
+        document.getElementById('confirmationMessage').textContent = 'Error submitting form.';
+        document.getElementById('confirmationMessage').style.color = 'red';
         console.error(err);
       });
     });
