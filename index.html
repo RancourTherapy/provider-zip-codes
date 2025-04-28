@@ -58,61 +58,61 @@
     <label for="number">How many cases are you looking for?</label>
     <input type="text" id="number" required>
     
-    <label for="availability">Availability:</label>
-      <table border="1" cellpadding="5">
-        <thead>
-          <tr>
-            <th>Time</th>
-            <th>Monday</th>
-            <th>Tuesday</th>
-            <th>Wednesday</th>
-            <th>Thursday</th>
-            <th>Friday</th>
-            <th>Saturday</th>
-            <th>Sunday</th>
-          </tr>
-        </thead>
-        <tbody>
-          <script>
-            const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-            const blocks = [
-              { label: "All Day", key: "all_day" },
-              { label: "Before 9a", key: "before_9a" },
-              { label: "9a–12p", key: "9a_12p" },
-              { label: "12p–3p", key: "12p_3p" },
-              { label: "3p–5p", key: "3p_5p" },
-              { label: "After 5p", key: "after_5p" }
-            ];
-            document.write(blocks.map(block => `
-              <tr>
-                <td>${block.label}</td>
-                ${days.map(day => `
-                  <td><input type="checkbox" name="availability" value="${day}_${block.key}"></td>
-                `).join('')}
-              </tr>
-            `).join(''));
+    <label>Availability:</label>
+    <table border="1" cellpadding="5">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Monday</th>
+          <th>Tuesday</th>
+          <th>Wednesday</th>
+          <th>Thursday</th>
+          <th>Friday</th>
+          <th>Saturday</th>
+          <th>Sunday</th>
+        </tr>
+      </thead>
+      <tbody>
+        <script>
+          const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+          const blocks = [
+            { label: "All Day", key: "all_day" },
+            { label: "Before 9a", key: "before_9a" },
+            { label: "9a–12p", key: "9a_12p" },
+            { label: "12p–3p", key: "12p_3p" },
+            { label: "3p–5p", key: "3p_5p" },
+            { label: "After 5p", key: "after_5p" }
+          ];
+          document.write(blocks.map(block => `
+            <tr>
+              <td>${block.label}</td>
+              ${days.map(day => `
+                <td><input type="checkbox" name="availability" value="${day}_${block.key}"></td>
+              `).join('')}
+            </tr>
+          `).join(''));
         </script>
-        </tbody>
-      </table>
+      </tbody>
+    </table>
 
     <label for="location">Where are you comfortable providing services?</label>
-      <select id="location" required>
-        <option value="">Select</option>
-        <option value="homes">homes</option>
-        <option value="daycares">daycares</option>
-        <option value="both">both</option>
-      </select>
+    <select id="location" required>
+      <option value="">Select</option>
+      <option value="homes">Homes</option>
+      <option value="daycares">Daycares</option>
+      <option value="both">Both</option>
+    </select>
 
     <label for="type">I am comfortable providing services:</label>
-      <select id="type" required>
-        <option value="">Select</option>
-        <option value="in_person">in person</option>
-        <option value="virtually">virtually</option>
-        <option value="both">both</option>
-      </select>
+    <select id="type" required>
+      <option value="">Select</option>
+      <option value="in_person">In Person</option>
+      <option value="virtually">Virtually</option>
+      <option value="both">Both</option>
+    </select>
 
     <label for="zipcodes">Selected Zip Codes (click on the map):</label>
-      <textarea id="zipcodes" name="zipcodes" rows="4" cols="50" readonly></textarea>
+    <textarea id="zipcodes" name="zipcodes" rows="4" cols="50" readonly></textarea>
     
     <div id="confirmationMessage" style="margin-top: 20px; font-weight: bold; color: green;"></div>   
     
@@ -125,7 +125,6 @@
     const map = L.map('map').setView([40.01, -75.15], 11);
     const zipcodes = new Set();
 
-    // Base map layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: 'Map data © OpenStreetMap contributors'
     }).addTo(map);
@@ -141,7 +140,6 @@
       document.getElementById('zipcodes').value = Array.from(zipcodes).join(',');
     }
 
-    // Load GeoJSON and display ZIP code boundaries
     fetch('philadelphia_zipcodes.geojson')
       .then(response => response.json())
       .then(data => {
@@ -166,14 +164,19 @@
         }).addTo(map);
       });
 
-    // Submit form
     document.getElementById('contractorForm').addEventListener('submit', function (e) {
       e.preventDefault();
-      const name = document.getElementById('name').value;
-      const discipline = document.getElementById('discipline').value;
-      const zipCodes = Array.from(zipcodes).join(',');
+      
+      const data = {
+        name: document.getElementById('name').value,
+        discipline: document.getElementById('discipline').value,
+        number: document.getElementById('number').value,
+        availability: Array.from(document.querySelectorAll('input[name="availability"]:checked')).map(el => el.value).join(','),
+        location: document.getElementById('location').value,
+        type: document.getElementById('type').value,
+        zipCodes: Array.from(zipcodes).join(',')
+      };
 
-      // Example: replace with actual submission logic (e.g., Google Sheets API, webhook)
       fetch("https://script.google.com/macros/s/AKfycbyGa82Tj8zhOu1Dh_P0yefu-SgUy0JS10KZ3AMjuvHKrmV4XHA89bEe-e1JldGmHmU/exec", {
         method: "POST",
         mode: "no-cors",
@@ -183,13 +186,13 @@
         body: JSON.stringify(data)
       })
       .then(() => {
-        // No way to inspect the real response, so we just show success
-        alert("Your form was submitted successfully! Thank you.");
-        form.reset(); // Optionally reset the form
+        document.getElementById('confirmationMessage').innerText = "Your form was submitted successfully! Thank you.";
+        document.getElementById('contractorForm').reset();
+        zipcodes.clear();
+        document.getElementById('zipcodes').value = "";
       })
       .catch(error => {
-        // If it REALLY failed (like no internet), catch it
-        alert("There was an error submitting the form. Please try again later.");
+        document.getElementById('confirmationMessage').innerText = "There was an error submitting the form. Please try again later.";
         console.error("Submission error:", error);
       });
     });      
