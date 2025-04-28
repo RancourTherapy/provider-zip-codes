@@ -167,48 +167,41 @@
       });
 
     // Submit form
-document.getElementById('contractorForm').addEventListener('submit', function (e) {
-  e.preventDefault();
+    document.getElementById('contractorForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const discipline = document.getElementById('discipline').value;
+      const zipCodes = Array.from(zipcodes).join(',');
 
-  const confirmationMessage = document.getElementById('confirmationMessage');
-  const name = document.getElementById('name').value;
-  const discipline = document.getElementById('discipline').value;
-  const number = document.getElementById('number').value;
-  const availability = getSortedAvailability(); // <-- this part assumes you have getSortedAvailability() working
-  const location = document.getElementById('location').value;
-  const type = document.getElementById('type').value;
-  const zipCodes = Array.from(zipcodes).join(','); // <-- FIXED THIS
-
-  fetch("https://script.google.com/macros/s/AKfycbyGa82Tj8zhOu1Dh_P0yefu-SgUy0JS10KZ3AMjuvHKrmV4XHA89bEe-e1JldGmHmU/exec", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      name,
-      discipline,
-      number,
-      availability,
-      location,
-      type,
-      zipCodes
-    })
+      // Example: replace with actual submission logic (e.g., Google Sheets API, webhook)
+fetch("https://script.google.com/macros/s/AKfycbyGa82Tj8zhOu1Dh_P0yefu-SgUy0JS10KZ3AMjuvHKrmV4XHA89bEe-e1JldGmHmU/exec", {
+  method: "POST",
+  mode: "no-cors",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    name,
+    discipline,
+    number: document.getElementById("number").value,
+    availability: getSortedAvailability(),
+    location: document.getElementById("location").value,
+    type: document.getElementById("type").value,
+    zipCodes: getZipCodes()
   })
-  .then(() => {
-    confirmationMessage.style.color = "green";
-    confirmationMessage.textContent = "Form submitted successfully! ✅";
-
-    document.getElementById('contractorForm').reset();
-    zipcodes.clear();
-    document.getElementById('zipcodes').value = "";
-  })
-  .catch((err) => {
-    console.error("Submission error:", err);
-    confirmationMessage.style.color = "red";
-    confirmationMessage.textContent = "Error submitting form. Please try again.";
-  });
+})
+.then(() => {
+  alert('Form submitted successfully!');
+  document.getElementById('contractorForm').reset();
+  zipcodes.clear();
+  document.getElementById('zipcodes').value = "";
+})
+.catch((err) => {
+  console.error("Submission error:", err);
+  alert('Unexpected error — check console');
 });
 
+    });
   </script>
 </body>
 </html>
