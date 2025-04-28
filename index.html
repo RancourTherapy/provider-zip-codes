@@ -137,7 +137,7 @@
         zipcodes.add(zip);
         layer.setStyle({ fillColor: "#ffcc00" });
       }
-      document.getElementById('zipcodes').value = Array.from(zipcodes).join(',');
+      document.getElementById('zipcodes').value = Array.from(zipcodes).join(', ');
     }
 
     fetch('philadelphia_zipcodes.geojson')
@@ -174,7 +174,7 @@
         availability: Array.from(document.querySelectorAll('input[name="availability"]:checked')).map(el => el.value).join(','),
         location: document.getElementById('location').value,
         type: document.getElementById('type').value,
-        zipCodes: Array.from(zipcodes).join(',')
+        zipCodes: Array.from(zipcodes).join(', ')
       };
 
       fetch("https://script.google.com/macros/s/AKfycbyGa82Tj8zhOu1Dh_P0yefu-SgUy0JS10KZ3AMjuvHKrmV4XHA89bEe-e1JldGmHmU/exec", {
