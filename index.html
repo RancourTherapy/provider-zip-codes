@@ -174,33 +174,33 @@
       const zipCodes = Array.from(zipcodes).join(',');
 
       // Example: replace with actual submission logic (e.g., Google Sheets API, webhook)
-      fetch("https://script.google.com/macros/s/AKfycbyGa82Tj8zhOu1Dh_P0yefu-SgUy0JS10KZ3AMjuvHKrmV4XHA89bEe-e1JldGmHmU/exec", {
+      fetch("YOUR_SCRIPT_URL", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          name,
-          discipline,
-          number: document.getElementById("number").value,
-          availability: getSortedAvailability(),
-          location: document.getElementById("location").value,
-          type: document.getElementById("type").value,
-          zipCodes: getZipCodes()
+          // your fields
         })
       })
-      .then(() => {
-        document.getElementById('confirmationMessage').textContent = "Form submitted successfully!";
-        document.getElementById('confirmationMessage').style.color = "green";
-        document.getElementById('contractorForm').reset();
-        zipcodes.clear();
-        document.getElementById('zipcodes').value = "";
+      .then(response => response.json())
+      .then(data => {
+        if (data.result === "success") {
+          document.getElementById('confirmationMessage').textContent = "Form submitted successfully!";
+          document.getElementById('confirmationMessage').style.color = "green";
+          document.getElementById('contractorForm').reset();
+          zipcodes.clear();
+          document.getElementById('zipcodes').value = "";
+        } else {
+          throw new Error(data.error || "Unknown error");
+        }
       })
       .catch((err) => {
         console.error("Submission error:", err);
         document.getElementById('confirmationMessage').textContent = "An error occurred. Please try again.";
         document.getElementById('confirmationMessage').style.color = "red";
       });
+
     });      
   </script>
 </body>
