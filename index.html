@@ -176,31 +176,22 @@
       // Example: replace with actual submission logic (e.g., Google Sheets API, webhook)
       fetch("https://script.google.com/macros/s/AKfycbyGa82Tj8zhOu1Dh_P0yefu-SgUy0JS10KZ3AMjuvHKrmV4XHA89bEe-e1JldGmHmU/exec", {
         method: "POST",
+        mode: "no-cors",
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          // your fields
-        })
+        body: JSON.stringify(data)
       })
-      .then(response => response.json())
-      .then(data => {
-        if (data.result === "success") {
-          document.getElementById('confirmationMessage').textContent = "Form submitted successfully!";
-          document.getElementById('confirmationMessage').style.color = "green";
-          document.getElementById('contractorForm').reset();
-          zipcodes.clear();
-          document.getElementById('zipcodes').value = "";
-        } else {
-          throw new Error(data.error || "Unknown error");
-        }
+      .then(() => {
+        // No way to inspect the real response, so we just show success
+        alert("Your form was submitted successfully! Thank you.");
+        form.reset(); // Optionally reset the form
       })
-      .catch((err) => {
-        console.error("Submission error:", err);
-        document.getElementById('confirmationMessage').textContent = "An error occurred. Please try again.";
-        document.getElementById('confirmationMessage').style.color = "red";
+      .catch(error => {
+        // If it REALLY failed (like no internet), catch it
+        alert("There was an error submitting the form. Please try again later.");
+        console.error("Submission error:", error);
       });
-
     });      
   </script>
 </body>
