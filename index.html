@@ -140,10 +140,12 @@
       document.getElementById('zipcodes').value = Array.from(zipcodes).join(', ');
     }
 
+    let geoJsonLayer;
+
     fetch('philadelphia_zipcodes.geojson')
       .then(response => response.json())
       .then(data => {
-        L.geoJSON(data, {
+        geoJsonLayer = L.geoJSON(data, {
           style: () => ({
             color: "#3388ff",
             weight: 2,
@@ -193,41 +195,5 @@
         document.getElementById('contractorForm').reset();
         zipcodes.clear();
         document.getElementById('zipcodes').value = "";
-      })
-      .catch(error => {
-        document.getElementById('confirmationMessage').innerText = "There was an error submitting the form. Please try again later.";
-        console.error("Submission error:", error);
-      });
-    });      
 
-    // Function to format the availability into the desired format
-    function formatAvailability() {
-      const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-      const blocks = [
-        { label: "All Day", key: "all_day" },
-        { label: "Before 9a", key: "before_9a" },
-        { label: "9a–12p", key: "9a_12p" },
-        { label: "12p–3p", key: "12p_3p" },
-        { label: "3p–5p", key: "3p_5p" },
-        { label: "After 5p", key: "after_5p" }
-      ];
-
-      let availability = {};
-
-      days.forEach(day => {
-        const selectedBlocks = blocks
-          .filter(block => document.querySelector(`input[name="availability"][value="${day}_${block.key}"]:checked`))
-          .map(block => block.key);
-
-        if (selectedBlocks.length > 0) {
-          availability[day] = selectedBlocks.join(', ');
-        }
-      });
-
-      return Object.entries(availability)
-        .map(([day, times]) => `${day}: ${times}`)
-        .join('\n');
-    }
-  </script>
-</body>
-</html>
+        // Reset map selection
