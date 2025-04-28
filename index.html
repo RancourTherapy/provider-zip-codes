@@ -192,14 +192,16 @@ fetch("https://script.google.com/macros/s/AKfycbyGa82Tj8zhOu1Dh_P0yefu-SgUy0JS10
   })
 })
 .then(() => {
-  alert('Form submitted successfully!');
+  document.getElementById('confirmationMessage').textContent = "Form submitted successfully!";
+  document.getElementById('confirmationMessage').style.color = "green";
   document.getElementById('contractorForm').reset();
   zipcodes.clear();
   document.getElementById('zipcodes').value = "";
 })
 .catch((err) => {
   console.error("Submission error:", err);
-  alert('Unexpected error — check console');
+  document.getElementById('confirmationMessage').textContent = "An error occurred. Please try again.";
+  document.getElementById('confirmationMessage').style.color = "red";
 });
   </script>
 </body>
