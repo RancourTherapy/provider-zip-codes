@@ -191,14 +191,15 @@ fetch("https://script.google.com/macros/s/AKfycbyGa82Tj8zhOu1Dh_P0yefu-SgUy0JS10
   })
 })
 .then(() => {
-  alert('Form submitted successfully!');
+  // don't try to parse response — just assume it worked
+  alert('Form submitted! ✅');
   document.getElementById('contractorForm').reset();
   zipcodes.clear();
   document.getElementById('zipcodes').value = "";
 })
 .catch((err) => {
   console.error("Submission error:", err);
-  alert('Unexpected error — check console');
+  alert('There was a problem submitting the form.');
 });
 
     });
