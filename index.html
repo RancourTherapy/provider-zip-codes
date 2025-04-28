@@ -167,17 +167,17 @@
       });
 
     // Submit form
-   document.getElementById('contractorForm').addEventListener('submit', function (e) {
+document.getElementById('contractorForm').addEventListener('submit', function (e) {
   e.preventDefault();
 
   const confirmationMessage = document.getElementById('confirmationMessage');
   const name = document.getElementById('name').value;
   const discipline = document.getElementById('discipline').value;
   const number = document.getElementById('number').value;
-  const availability = getSortedAvailability();
+  const availability = getSortedAvailability(); // <-- this part assumes you have getSortedAvailability() working
   const location = document.getElementById('location').value;
   const type = document.getElementById('type').value;
-  const zipCodes = getZipCodes();
+  const zipCodes = Array.from(zipcodes).join(','); // <-- FIXED THIS
 
   fetch("https://script.google.com/macros/s/AKfycbyGa82Tj8zhOu1Dh_P0yefu-SgUy0JS10KZ3AMjuvHKrmV4XHA89bEe-e1JldGmHmU/exec", {
     method: "POST",
@@ -209,7 +209,7 @@
     confirmationMessage.textContent = "Error submitting form. Please try again.";
   });
 });
-    
+
   </script>
 </body>
 </html>
