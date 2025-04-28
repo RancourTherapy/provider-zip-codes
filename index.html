@@ -60,6 +60,10 @@
   <div id="map"></div>
 
   <form id="contractorForm">
+
+    <label for="zipcodes">Selected Zip Codes (click on the map):</label>
+    <textarea id="zipcodes" name="zipcodes" rows="4" cols="50" readonly></textarea>
+    
     <label for="name">Name (First Last):</label>
     <input type="text" id="name" required>
 
@@ -127,9 +131,6 @@
       <option value="virtually">Virtually</option>
       <option value="both">Both</option>
     </select>
-
-    <label for="zipcodes">Selected Zip Codes (click on the map):</label>
-    <textarea id="zipcodes" name="zipcodes" rows="4" cols="50" readonly></textarea>
     
     <div id="confirmationMessage" style="margin-top: 20px; font-weight: bold; color: green;"></div>   
     
