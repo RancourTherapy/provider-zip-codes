@@ -142,6 +142,7 @@
 
     let geoJsonLayer;
 
+    // Load GeoJSON and add it to the map
     fetch('philadelphia_zipcodes.geojson')
       .then(response => response.json())
       .then(data => {
@@ -166,6 +167,7 @@
         }).addTo(map);
       });
 
+    // Form submission handler
     document.getElementById('contractorForm').addEventListener('submit', function (e) {
       e.preventDefault();
       
@@ -196,7 +198,7 @@
         zipcodes.clear();
         document.getElementById('zipcodes').value = "";
 
-        // Reset map selection
+        // Reset map selection by clearing styles
         geoJsonLayer.eachLayer(layer => {
           layer.setStyle({ fillColor: "#3388ff" });
         });
