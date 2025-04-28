@@ -26,6 +26,23 @@
     }
     button {
       padding: 10px 20px;
+      font-size: 16px;
+      position: relative;
+    }
+    .spinner {
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #3498db;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 10px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
     .zip-label {
       font-size: 14px;
@@ -43,11 +60,7 @@
   <div id="map"></div>
 
   <form id="contractorForm">
-    
-    <label for="zipcodes">Selected Zip Codes (click on the map):</label>
-    <textarea id="zipcodes" name="zipcodes" rows="4" cols="50" readonly></textarea>
-    
-    <label for="name">Name (Last First):</label>
+    <label for="name">Name (First Last):</label>
     <input type="text" id="name" required>
 
     <label for="discipline">Discipline:</label>
@@ -57,11 +70,10 @@
       <option value="PT">PT</option>
       <option value="SLP">SLP</option>
       <option value="SI">SI</option>
-      <option value="Nutrition">Nutrition</option>
     </select>
 
     <label for="number">How many cases are you looking for?</label>
-    <input type="text" id="number">
+    <input type="text" id="number" required>
     
     <label>Availability:</label>
     <table border="1" cellpadding="5">
@@ -101,24 +113,27 @@
     </table>
 
     <label for="location">Where are you comfortable providing services?</label>
-    <select id="location">
+    <select id="location" required>
       <option value="">Select</option>
-      <option value="homes">homes</option>
-      <option value="daycares">daycares</option>
-      <option value="both">both</option>
+      <option value="homes">Homes</option>
+      <option value="daycares">Daycares</option>
+      <option value="both">Both</option>
     </select>
 
     <label for="type">I am comfortable providing services:</label>
-    <select id="type">
+    <select id="type" required>
       <option value="">Select</option>
-      <option value="in person">in person</option>
-      <option value="virtually">virtually</option>
-      <option value="both">both</option>
+      <option value="in_person">In Person</option>
+      <option value="virtually">Virtually</option>
+      <option value="both">Both</option>
     </select>
+
+    <label for="zipcodes">Selected Zip Codes (click on the map):</label>
+    <textarea id="zipcodes" name="zipcodes" rows="4" cols="50" readonly></textarea>
     
     <div id="confirmationMessage" style="margin-top: 20px; font-weight: bold; color: green;"></div>   
     
-    <button type="submit">Submit</button>
+    <button type="submit" id="submitButton">Submit</button>
   </form>
 
   <!-- Leaflet JS -->
@@ -126,6 +141,7 @@
   <script>
     const map = L.map('map').setView([40.01, -75.15], 11);
     const zipcodes = new Set();
+    let geojsonLayer;
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: 'Map data © OpenStreetMap contributors'
@@ -142,13 +158,10 @@
       document.getElementById('zipcodes').value = Array.from(zipcodes).join(', ');
     }
 
-    let geoJsonLayer;
-
-    // Load GeoJSON and add it to the map
     fetch('philadelphia_zipcodes.geojson')
       .then(response => response.json())
       .then(data => {
-        geoJsonLayer = L.geoJSON(data, {
+        geojsonLayer = L.geoJSON(data, {
           style: () => ({
             color: "#3388ff",
             weight: 2,
@@ -169,18 +182,36 @@
         }).addTo(map);
       });
 
-    // Form submission handler
+    function formatAvailability() {
+      const checkboxes = document.querySelectorAll('input[name="availability"]:checked');
+      const availabilityData = {};
+
+      checkboxes.forEach(checkbox => {
+        const [day, time] = checkbox.value.split('_');
+        if (!availabilityData[day]) {
+          availabilityData[day] = [];
+        }
+        availabilityData[day].push(time);
+      });
+
+      return Object.entries(availabilityData)
+        .map(([day, times]) => `${day}: ${times.join(', ')}`)
+        .join('\n');
+    }
+
     document.getElementById('contractorForm').addEventListener('submit', function (e) {
       e.preventDefault();
       
+      const submitButton = document.getElementById('submitButton');
+      const originalButtonText = submitButton.innerHTML;
+      submitButton.disabled = true;
+      submitButton.innerHTML = `Submitting... <div class="spinner"></div>`;
+
       const data = {
         name: document.getElementById('name').value,
         discipline: document.getElementById('discipline').value,
         number: document.getElementById('number').value,
-        
-        // Format the availability into the desired string format
         availability: formatAvailability(),
-        
         location: document.getElementById('location').value,
         type: document.getElementById('type').value,
         zipCodes: Array.from(zipcodes).join(', ')
@@ -199,46 +230,21 @@
         document.getElementById('contractorForm').reset();
         zipcodes.clear();
         document.getElementById('zipcodes').value = "";
-
-        // Reset map selection by clearing styles
-        geoJsonLayer.eachLayer(layer => {
-          layer.setStyle({ fillColor: "#3388ff" });
-        });
+        if (geojsonLayer) {
+          geojsonLayer.eachLayer(layer => {
+            layer.setStyle({ fillColor: "#3388ff" });
+          });
+        }
       })
       .catch(error => {
         document.getElementById('confirmationMessage').innerText = "There was an error submitting the form. Please try again later.";
         console.error("Submission error:", error);
+      })
+      .finally(() => {
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalButtonText;
       });
-    });      
-
-    // Function to format the availability into the desired format
-    function formatAvailability() {
-      const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-      const blocks = [
-        { label: "All Day", key: "all_day" },
-        { label: "Before 9a", key: "before_9a" },
-        { label: "9a–12p", key: "9a_12p" },
-        { label: "12p–3p", key: "12p_3p" },
-        { label: "3p–5p", key: "3p_5p" },
-        { label: "After 5p", key: "after_5p" }
-      ];
-
-      let availability = {};
-
-      days.forEach(day => {
-        const selectedBlocks = blocks
-          .filter(block => document.querySelector(`input[name="availability"][value="${day}_${block.key}"]:checked`))
-          .map(block => block.key);
-
-        if (selectedBlocks.length > 0) {
-          availability[day] = selectedBlocks.join(', ');
-        }
-      });
-
-      return Object.entries(availability)
-        .map(([day, times]) => `${day}: ${times}`)
-        .join('\n');
-    }
+    });
   </script>
 </body>
 </html>
