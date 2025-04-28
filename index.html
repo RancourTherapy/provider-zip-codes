@@ -20,7 +20,7 @@
     form {
       margin-top: 20px;
     }
-    label, input {
+    label, input, select, textarea {
       margin-bottom: 10px;
       display: block;
     }
@@ -188,7 +188,8 @@
       const availabilityData = {};
 
       checkboxes.forEach(checkbox => {
-        const [day, time] = checkbox.value.split('_');
+        const [day, ...timeParts] = checkbox.value.split('_');
+        const time = timeParts.join('_');
         if (!availabilityData[day]) {
           availabilityData[day] = [];
         }
@@ -206,7 +207,7 @@
       const submitButton = document.getElementById('submitButton');
       const originalButtonText = submitButton.innerHTML;
       submitButton.disabled = true;
-      submitButton.innerHTML = `Submitting... <div class="spinner"></div>`;
+      submitButton.innerHTML = `Submitting <div class="spinner"></div>`;
 
       const data = {
         name: document.getElementById('name').value,
